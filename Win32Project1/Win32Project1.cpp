@@ -8,6 +8,11 @@
 #pragma comment(linker,"\"/manifestdependency:type='win32' name='Microsoft.Windows.Common-Controls' version='6.0.0.0' processorArchitecture='*' publicKeyToken='6595b64144ccf1df' language='*'\"")
 #pragma comment(lib, "ComCtl32.lib")
 #include <time.h>
+#include <Objbase.h>
+#pragma comment(lib, "Ole32.lib")
+#include "RibbonFramework.h"
+#include "RibbonIDs.h"
+
 #define MAX_LOADSTRING 100
 
 // Global Variables:
@@ -31,7 +36,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 	UNREFERENCED_PARAMETER(lpCmdLine);
 
 	// TODO: Place code here.
-
+	HRESULT hr = CoInitialize(NULL);
 	// Initialize global strings
 	LoadStringW(hInstance, IDS_APP_TITLE, szTitle, MAX_LOADSTRING);
 	LoadStringW(hInstance, IDC_WIN32PROJECT1, szWindowClass, MAX_LOADSTRING);
@@ -56,6 +61,8 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 		}
 	}
 
+	CoUninitialize();
+
 	return (int)msg.wParam;
 }
 
@@ -72,7 +79,7 @@ ATOM MyRegisterClass(HINSTANCE hInstance)
 
 	wcex.cbSize = sizeof(WNDCLASSEX);
 
-	wcex.style = CS_HREDRAW | CS_VREDRAW;
+	wcex.style = 0;// CS_HREDRAW | CS_VREDRAW;
 	wcex.lpfnWndProc = WndProc;
 	wcex.cbClsExtra = 0;
 	wcex.cbWndExtra = 0;
@@ -140,11 +147,15 @@ bool bSessionRunning = true;
 
 LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
-
+	bool initSuccess;
 	switch (message)
 	{
 
 	case WM_CREATE: {
+		initSuccess = InitializeFramework(hWnd);
+		if (!initSuccess) {
+			return -1;
+		}
 
 		INITCOMMONCONTROLSEX icc;
 		icc.dwSize = sizeof(icc);
@@ -165,7 +176,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		//draw bread area
 		HWND MinusButtonBreakTime = CreateWindowEx(0, L"BUTTON", L"-", WS_TABSTOP | WS_VISIBLE | WS_CHILD | BS_PUSHBUTTON,  // Styles 
 			450,
-			50,
+			150,
 			20,
 			20,
 			hWnd,
@@ -175,7 +186,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		SendMessage(MinusButtonBreakTime, WM_SETFONT, WPARAM(hFont), TRUE);
 
 		HWND AddButtonBreakTime = CreateWindowEx(0,L"BUTTON", L"+", WS_TABSTOP | WS_VISIBLE | WS_CHILD | BS_DEFPUSHBUTTON,
-			600, 50, 20, 20, hWnd, (HMENU)IDC_BUTTON2,
+			600, 150, 20, 20, hWnd, (HMENU)IDC_BUTTON2,
 			(HINSTANCE)GetWindowLong(hWnd, GWL_HINSTANCE),
 			NULL);
 
@@ -187,8 +198,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			L"Break Time",      // Button text 
 			WS_TABSTOP | WS_VISIBLE | WS_CHILD | BS_DEFPUSHBUTTON,  // Styles 
 			475,         // x position 
-			10,         // y position 
-			100,        // Button width
+			120,         // y position 
+			150,        // Button width
 			20,        // Button height
 			hWnd,     // Parent window
 			NULL,       // No menu.
@@ -201,7 +212,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			L"5",      // Button text 
 			ES_LEFT | WS_BORDER | WS_TABSTOP | WS_VISIBLE | WS_CHILD|ES_READONLY,  // Styles 
 			475,         // x position 
-			50,         // y position 
+			150,         // y position 
 			100,        // Button width
 			30,        // Button height
 			hWnd,     // Parent window
@@ -216,7 +227,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			L"-",      // Button text 
 			WS_TABSTOP | WS_VISIBLE | WS_CHILD | BS_DEFPUSHBUTTON,  // Styles 
 			450,         // x position 
-			200,         // y position 
+			250,         // y position 
 			20,        // Button width
 			20,        // Button height
 			hWnd,     // Parent window
@@ -229,7 +240,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			L"+",      // Button text 
 			WS_TABSTOP | WS_VISIBLE | WS_CHILD | BS_DEFPUSHBUTTON,  // Styles 
 			600,         // x position 
-			200,         // y position 
+			250,         // y position 
 			20,        // Button width
 			20,        // Button height
 			hWnd,     // Parent window
@@ -242,8 +253,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			L"Static",  // Predefined class; Unicode assumed 
 			L"Session Time",      // Button text 
 			WS_TABSTOP | WS_VISIBLE | WS_CHILD | BS_DEFPUSHBUTTON,  // Styles 
-			475,         // x position 
-			160,         // y position 
+			475,        
+			210,         // y position 
 			100,        // Button width
 			30,        // Button height
 			hWnd,     // Parent window
@@ -256,7 +267,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			L"25",      // Button text 
 			ES_LEFT | WS_BORDER | WS_TABSTOP | WS_VISIBLE | WS_CHILD|ES_READONLY,  // Styles 
 			475,         // x position 
-			200,         // y position 
+			250,         // y position 
 			100,        // Button width
 			30,        // Button height
 			hWnd,     // Parent window
@@ -269,7 +280,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			L"Number Of Pomdoros:",      // Button text 
 			ES_LEFT | WS_BORDER | WS_TABSTOP | WS_VISIBLE | WS_CHILD,  // Styles 
 			450,         // x position 
-			250,         // y position 
+			300,         // y position 
 			200,        // Button width
 			20,        // Button height
 			hWnd,     // Parent window
@@ -282,7 +293,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			L"0",
 			ES_CENTER | WS_BORDER | WS_TABSTOP | WS_VISIBLE | WS_CHILD|ES_READONLY,  // Styles 
 			455,         // x position 
-			300,         // y position 
+			350,         // y position 
 			200,        // Button width
 			20,        // Button height
 			hWnd,     // Parent window
@@ -295,7 +306,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			L"Start",      // Button text 
 			WS_TABSTOP | WS_VISIBLE | WS_CHILD | BS_DEFPUSHBUTTON,  // Styles 
 			450,         // x position 
-			340,         // y position 
+			390,         // y position 
 			50,        // Button width
 			20,        // Button height
 			hWnd,     // Parent window
@@ -309,7 +320,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			L"Reset",      // Button text 
 			WS_TABSTOP | WS_VISIBLE | WS_CHILD | BS_DEFPUSHBUTTON,  // Styles 
 			520,         // x position 
-			340,         // y position 
+			390,         // y position 
 			50,        // Button width
 			20,        // Button height
 			hWnd,     // Parent window
@@ -386,7 +397,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 				if (bSessionRunning == true) {
 					iSecondPassed = (clock() - lStartTime);
 					if (iSecondPassed >= iSecondSession) {
-						DialogBox(hInst, MAKEINTRESOURCE(IDD_ALERTBOX), NULL, Alert);
+						MessageBox(0, L"Bạn hãy nghỉ ngơi một lát", 0, 0);
 						iNumberOfPomodoro++;
 						bSessionRunning = false;
 						wsprintf(bufferNumberOfPomodoro, L"%d", iNumberOfPomodoro);
@@ -398,7 +409,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 					if (iNumberOfPomodoro < 4) {
 						iSecondPassed = (clock() - lStartTime);
 						if (iSecondPassed >= iSecondBreak) {
-							DialogBox(hInst, MAKEINTRESOURCE(IDD_ALERTBOX), NULL, Alert);
+							MessageBox(0, L"Bạn đã nghỉ đủ chưa.", 0, 0);
 							bSessionRunning = true;
 							lStartTime = clock();
 						}
@@ -406,7 +417,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 					else {
 						iSecondPassed = (clock() - lStartTime);
 						if (iSecondPassed >= 15*60) {
-							DialogBox(hInst, MAKEINTRESOURCE(IDD_ALERTBOX), NULL, Alert);
+							MessageBox(0, L"Bạn đã ghỉ đủ chưa?", 0, 0);
 							bSessionRunning = true;
 							lStartTime = clock();
 							iNumberOfPomodoro = 0;
@@ -440,6 +451,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 	}
 	break;
 	case WM_DESTROY:
+		DestroyFramework();
 		PostQuitMessage(0);
 		break;
 	default:

@@ -143,12 +143,18 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="Application.h" />
+    <ClInclude Include="CommandHandler.h" />
     <ClInclude Include="Resource.h" />
+    <ClInclude Include="RibbonFramework.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
     <ClInclude Include="Win32Project1.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Application.cpp" />
+    <ClCompile Include="CommandHandler.cpp" />
+    <ClCompile Include="RibbonFramework.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
@@ -158,11 +164,23 @@
     <ClCompile Include="Win32Project1.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ResourceCompile Include="Ribbon.rc" />
     <ResourceCompile Include="Win32Project1.rc" />
   </ItemGroup>
   <ItemGroup>
+    <Image Include="Image.png" />
+    <Image Include="Images\ribbon.ico" />
     <Image Include="small.ico" />
     <Image Include="Win32Project1.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Xml Include="Ribbon.xml">
+      <SubType>Designer</SubType>
+    </Xml>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Ribbon.bml" />
+    <None Include="RibbonIDs.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
